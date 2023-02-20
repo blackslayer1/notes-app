@@ -22,9 +22,26 @@ const [run, setRun] = useState<boolean>(shouldRun);
     }
     setRun(true);
   }
+  
+  const pinNote = (id: number) => {
+    const note = document.getElementById('note' + id)!;
+    const pinIcon = document.getElementById('pinIcon' + id)!;
+    if(run === true){
+    if(pinIcon.style.color !== 'black'){
+    note.style.position="fixed";
+    note.style.width="100%";
+    note.style.top="200px";
+    pinIcon.style.color="black";
+  } else {
+    note.style.position="static";
+    pinIcon.style.color="gray";
+  }
+}
+  setRun(true);
+  }
 
   return (
-  <div className="note" onClick={createNotes}>
+  <div className="note" id={"note" + id} onClick={createNotes}>
     <div className="text">
     <h2 id={'noteTitle' + id}>{title}</h2>
     <div>
@@ -33,9 +50,9 @@ const [run, setRun] = useState<boolean>(shouldRun);
     </div>
     </div>
     <div className="icons">
-    <PushPinIcon className="pinIcon" />
-    <DeleteIcon onClick={()=>{deleteNote(id)}} className="deleteIcon" />
-    <LabelIcon className="labelIcon" />
+    <PushPinIcon onClick={()=>{pinNote(id)}} className="pinIcon icon" id={'pinIcon'+id} />
+    <DeleteIcon onClick={()=>{deleteNote(id)}} className="deleteIcon icon" />
+    <LabelIcon className="labelIcon icon" />
     </div>
   </div>
   )
