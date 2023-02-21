@@ -15,6 +15,7 @@ interface Notes{
 
 const Note = ({ title, lastEdit, dateCreated, id, deleteNote, shouldRun }: Notes) => {
 const [run, setRun] = useState<boolean>(shouldRun);
+const [pin, setPin] = useState<boolean>(true);
 
   const createNotes = () => {
     if(run === true){
@@ -26,19 +27,18 @@ const [run, setRun] = useState<boolean>(shouldRun);
   const pinNote = (id: number) => {
     const note = document.getElementById('note' + id)!;
     const pinIcon = document.getElementById('pinIcon' + id)!;
-    if(run === true){
+    const allPins = Array.from(document.getElementsByClassName('pinIcon'));
+
     if(pinIcon.style.color !== 'black'){
-    note.style.position="fixed";
-    note.style.width="100%";
-    note.style.top="200px";
-    pinIcon.style.color="black";
+      note.style.position="fixed";
+      note.style.width="100%";
+      note.style.top="200px";
+      pinIcon.style.color="black";
   } else {
     note.style.position="static";
     pinIcon.style.color="gray";
   }
 }
-  setRun(true);
-  }
 
   return (
   <div className="note" id={"note" + id} onClick={createNotes}>

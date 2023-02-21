@@ -1,15 +1,22 @@
 import './App.scss';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, ChangeEvent } from 'react';
 import Header from './Header';
 import Note from './Note';
 import Notes from './Interface';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
+interface Filter{
+  word: string,
+  id: number
+}
+
 function App() {
   const [notes, setNotes] = useState<Notes[]>([]);
   const [shouldRun, setShouldRun] = useState<boolean>(true);
   const [darkThemeIsOn, setDarkThemeIsOn] = useState<boolean>(false);
+  const [sort, setSort] = useState<string>('');
+  const [filters, setFilters] = useState<Filter[]>([]);
 
   function formatAMPM(date: any) {
     var hours = date.getHours();
@@ -207,22 +214,61 @@ function App() {
     }
   }
 
+  useEffect(()=>{
+    switch(sort){
+      case 'alphabet':
+      notes.sort((a, b) => a.title.localeCompare(b.title));
+      break;
+      case 'shortest':
+        notes.sort(function(a, b) {
+          return a.text.length + b.text.length;
+        });
+      break;
+      case 'longest':
+        notes.sort(function(a, b) {
+          return a.text.length - b.text.length;
+        });
+      break;
+    }
+  }, [sort])
+
+  const onFocus = () => {
+    document.onkeypress = function (e) {
+      e = e || window.event;
+      if(e.keyCode === 13){
+        let filter = document.getElementById('filter')! as HTMLInputElement;
+        setFilters([...filters, {word: filter.value, id: Math.random()}]);
+      }
+  };
+  }
+
+  const removeFilter = (id: number) => {
+    setFilters(filters.filter((filter)=>{
+      return filter.id !== id;
+    }))
+  }
+
   return (
     <div className="App">
       <Header />
       <div className="heading" id="heading">
         <div>
-        <input type="text" className="filter" placeholder='Filter todos' />
-        <select id="sort">
-          <option value="1">Sort by last edited</option>
-          <option value="2">Sort by alphabet</option>
-          <option value="3">Sort by last created</option>
-          <option value="4">Sort by longest</option>
+        <input type="text" className="filter" id="filter" placeholder='Filter todos' onFocus={onFocus}/>
+        <select id="sort" onChange={(e: ChangeEvent<HTMLSelectElement>)=>{setSort(e.target.value);}}>
+          <option value="alphabet" selected>Sort by alphabet</option>
+          <option value="shortest">Sort by shortest</option>
+          <option value="longest">Sort by longest</option>
         </select>
         <SettingsBrightnessIcon className="darkMode" id="darkMode" onClick={darkMode} />
         </div>
       </div>
       <div className="container">
+      <div style={{position: "relative", right: '550px', color: "gray"}}>
+      <span>Word Filter: </span>
+      {filters.length > 0 ? filters.map((filter) => {
+        return <button className="filterWord" id={(filter.id).toString()} onClick={()=>{removeFilter(filter.id)}}>{filter.word}</button>
+      }) : "None"}
+      </div>
       <div id="createNoteModal" className="modal">
       <div className="modal-content">
       <span className="close" onClick={()=>{document.getElementById('createNoteModal')!.style.display="none"}}>&times;</span>
