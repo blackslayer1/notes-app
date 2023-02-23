@@ -13,10 +13,12 @@ interface Filter{
 
 function App() {
   const [notes, setNotes] = useState<Notes[]>([]);
+  const [notes2, setNotes2] = useState<Notes[]>([]);
   const [shouldRun, setShouldRun] = useState<boolean>(true);
   const [darkThemeIsOn, setDarkThemeIsOn] = useState<boolean>(false);
   const [sort, setSort] = useState<string>('');
   const [filters, setFilters] = useState<Filter[]>([]);
+  const [run, setRun] = useState<number>(0);
 
   function formatAMPM(date: any) {
     var hours = date.getHours();
@@ -247,6 +249,25 @@ function App() {
       return filter.id !== id;
     }))
   }
+
+  useEffect(()=>{
+    if(run < 2){
+      setNotes2(notes);
+    }
+    setRun(run+1);
+
+    if(filters.length > 0){
+      let words: string[] = [];
+      filters.map((filter)=>{
+        words.push(filter.word);
+      })
+      setNotes(notes.filter((note)=>{
+        return words.includes(note.title)
+      }))
+    } else {
+      setNotes(notes2);
+    }
+  }, [filters])
 
   return (
     <div className="App">
