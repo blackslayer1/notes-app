@@ -31,11 +31,12 @@ const [pin, setPin] = useState<boolean>(true);
 
     if(pinIcon.style.color !== 'black'){
       note.style.position="fixed";
-      note.style.width="100%";
+      note.style.width="65%";
       note.style.top="200px";
       pinIcon.style.color="black";
   } else {
     note.style.position="static";
+    note.style.width="100%";
     pinIcon.style.color="gray";
   }
 }
